@@ -11,7 +11,6 @@ SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 
 # email details
-subject = "Intercambio Navideño Familiar"
 body = "El intercambio esta listo!!"
 EMAIL_SUBJECT = os.getenv("EMAIL_SUBJECT")
 
@@ -31,7 +30,7 @@ for i in range(len(participants)):
     message = EmailMessage()
     message['From'] = SENDER_EMAIL
     message['To'] = cur_participant["email"]
-    message['Subject'] = subject
+    message['Subject'] = EMAIL_SUBJECT
     message.set_content(body)
     html_msg = (
         html_template
