@@ -11,7 +11,6 @@ SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 
 # email details
-body = "El intercambio esta listo!!"
 EMAIL_SUBJECT = os.getenv("EMAIL_SUBJECT")
 
 # load the template
@@ -26,6 +25,8 @@ shuffle(participants)
 for i in range(len(participants)):
     cur_participant = participants[i - 1]
     next_participant = participants[i]
+    # build the body (fallback if HTML is not rendered)
+    body = f"Hola {cur_participant['name']}, te tocó : {next_participant['name']}"
     # build the message
     message = EmailMessage()
     message['From'] = SENDER_EMAIL
