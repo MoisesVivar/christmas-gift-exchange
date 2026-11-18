@@ -1,20 +1,24 @@
 import os
+import uuid
 from pathlib import Path
 from random import shuffle
 from dotenv import load_dotenv
-from send_email import send_email
+from email_helpers.send_email import send_email
 from participants import participants
 from email.message import EmailMessage
+from email_helpers.email_cleanup import delete_exchange_emails
 
 load_dotenv()
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
+DELETE_ASSIGNMENTS = os.getenv("DELETE_ASSIGNMENTS")
 
 # email details
 EMAIL_SUBJECT = os.getenv("EMAIL_SUBJECT")
+campaign_id = str(uuid.uuid4())
 
 # load the template
-template_path = Path("email_template.html")
+template_path = Path("email_helpers/email_template.html")
 html_template = template_path.read_text(encoding="utf-8")
 
 # shuffle the participant list twice to be safe :D
@@ -32,6 +36,7 @@ for i in range(len(participants)):
     message['From'] = SENDER_EMAIL
     message['To'] = cur_participant["email"]
     message['Subject'] = EMAIL_SUBJECT
+    message["X-Exchange-Id"] = campaign_id
     message.set_content(body)
     html_msg = (
         html_template
@@ -40,6 +45,11 @@ for i in range(len(participants)):
     )
     message.add_alternative(html_msg, subtype="html")
     send_email(SENDER_EMAIL, SENDER_PASSWORD, cur_participant["email"], message)
+
+# If you want to remove the sent emails.
+if DELETE_ASSIGNMENTS:
+    deleted = delete_exchange_emails(campaign_id)
+    print(f"Deleted {deleted} emails from your sent folder")
 
 
 
